@@ -52,9 +52,19 @@ def home():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    data = request.get_json()
-    prediction = model.predict([[data['area'], data['rooms']]])
-    return jsonify({'prediction': prediction[0]})
+    data = request.json
+    
+    # 入力データをDataFrameに変換
+    input_data = pd.DataFrame([[
+        data['age'],
+        data['area'],
+        data['access']
+    ]], columns=['築年数', '面積', 'アクセス'])
+    
+    # 予測を実行
+    prediction = model.predict(input_data)[0]
+    
+    return jsonify({'prediction': float(prediction)})
 
 @app.route('/static/<path:path>')
 def send_static(path):
